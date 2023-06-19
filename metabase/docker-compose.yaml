@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+  metabase_db:
+    image: postgres
+    container_name: metabase_db
+    restart: always
+    environment:
+      POSTGRES_DB: metabase 
+      POSTGRES_USER: metabase
+      POSTGRES_PASSWORD: metabase
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+    ports:
+      - 5432:5432
+
+  metabase:
+    image: metabase/metabase
+    container_name: metabase
+    restart: always
+    environment:
+      MB_DB_TYPE: "postgres"
+      MB_DB_DBNAME: "metabase"
+      MB_DB_PORT: "5432"
+      MB_DB_USER: "metabase"
+      MB_DB_PASS: "metabase"
+      MB_DB_HOST: "metabase_db" 
+      MB_DB_FILE: "/metabase-data/metabase.db"
+    depends_on:
+        - metabase_db 
+    volumes:
+        - metabase_data:/metabase-data
+    ports:
+      - 3000:3000
+volumes:
+  db_data:
+  metabase_data:
